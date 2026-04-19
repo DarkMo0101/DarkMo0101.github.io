@@ -142,11 +142,10 @@
     .hero {
       position: relative;
       z-index: 1;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 4rem 6vw 3rem;
+      padding: 7rem 6vw 4rem;
     }
 
     .hero-badge {
@@ -643,6 +642,43 @@
     .fade-up:nth-child(5) { animation-delay: 0.65s; }
     .fade-up:nth-child(6) { animation-delay: 0.8s; }
 
+    /* HERO STATS */
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding-right: 2rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .hero-stat:last-child { border-right: none; padding-right: 0; }
+
+    .hero-stat-val {
+      font-family: var(--sans);
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
     @media (max-width: 600px) {
       nav { padding: 0 1.25rem; }
       .nav-links { display: none; }
@@ -687,6 +723,25 @@
   <p class="hero-subtitle fade-up">
     DCO Tech III <span class="sep">·</span> Amazon Web Services <span class="sep">·</span> IT Infrastructure &amp; Cybersecurity
   </p>
+
+  <div class="hero-stats fade-up">
+    <div class="hero-stat">
+      <span class="hero-stat-val">3+</span>
+      <span class="hero-stat-label">Years in IT</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-val">AWS</span>
+      <span class="hero-stat-label">Cloud Ops</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-val">DC</span>
+      <span class="hero-stat-label">Data Center</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-val">🔐</span>
+      <span class="hero-stat-label">Cybersecurity</span>
+    </div>
+  </div>
 
   <div class="terminal-box fade-up">
     <div class="terminal-bar">
@@ -744,7 +799,7 @@
         <div class="exp-role">IT Support II</div>
         <div class="exp-date">Previous</div>
       </div>
-      <div class="exp-company">IT Department</div>
+      <div class="exp-company">Amazon</div>
       <div class="exp-desc">
         Provided advanced technical support, troubleshooting hardware and software issues,
         network configuration, and end-user assistance across the organization.
@@ -756,7 +811,7 @@
         <div class="exp-role">IT Equipment Coordinator</div>
         <div class="exp-date">Earlier</div>
       </div>
-      <div class="exp-company">IT Department</div>
+      <div class="exp-company">Amazon</div>
       <div class="exp-desc">
         Managed IT asset lifecycle, equipment procurement, inventory tracking,
         and coordinated deployment of hardware and devices across the organization.
