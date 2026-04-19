@@ -143,9 +143,37 @@
       position: relative;
       z-index: 1;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
       padding: 7rem 6vw 4rem;
+      gap: 2rem;
+    }
+
+    .hero-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .hero-solar {
+      flex: 0 0 420px;
+      height: 420px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #solarCanvas {
+      width: 420px;
+      height: 420px;
+    }
+
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; }
+      .hero-solar { display: none; }
     }
 
     .hero-badge {
@@ -712,6 +740,7 @@
 
 <!-- HERO -->
 <section class="hero">
+<div class="hero-content">
   <div class="hero-badge fade-up">
     <span class="status-dot"></span>
     Available for opportunities
@@ -771,6 +800,11 @@
     <a href="#experience" class="btn btn-primary">View Experience ↗</a>
     <a href="#contact" class="btn btn-outline">Get In Touch</a>
   </div>
+</div>
+
+<div class="hero-solar">
+  <canvas id="solarCanvas"></canvas>
+</div>
 </section>
 
 <!-- EXPERIENCE -->
@@ -979,6 +1013,128 @@
   }
 
   draw();
+</script>
+
+<script>
+  // Solar system animation
+  const sc = document.getElementById('solarCanvas');
+  const scx = sc.getContext('2d');
+  const DPR = window.devicePixelRatio || 1;
+  sc.width = 420 * DPR;
+  sc.height = 420 * DPR;
+  scx.scale(DPR, DPR);
+  const CX = 210, CY = 210;
+
+  const planets = [
+    { name: 'Mercury', orbit: 55,  radius: 5,   speed: 0.047, angle: 0.5,  color: '#94a3b8', glow: '#94a3b8' },
+    { name: 'Venus',   orbit: 85,  radius: 8,   speed: 0.035, angle: 1.2,  color: '#fbbf24', glow: '#fbbf24' },
+    { name: 'Earth',   orbit: 118, radius: 9,   speed: 0.029, angle: 2.1,  color: '#3b82f6', glow: '#60a5fa',
+      moon: { orbit: 18, radius: 3, speed: 0.12, angle: 0, color: '#94a3b8' } },
+    { name: 'Mars',    orbit: 152, radius: 7,   speed: 0.024, angle: 3.5,  color: '#ef4444', glow: '#f87171' },
+    { name: 'Saturn',  orbit: 192, radius: 11,  speed: 0.015, angle: 0.8,  color: '#d97706', glow: '#fbbf24', rings: true },
+  ];
+
+  function drawSolar(ts) {
+    scx.clearRect(0, 0, 420, 420);
+
+    // Orbit rings
+    planets.forEach(p => {
+      scx.beginPath();
+      scx.arc(CX, CY, p.orbit, 0, Math.PI * 2);
+      scx.strokeStyle = 'rgba(96,165,250,0.08)';
+      scx.lineWidth = 1;
+      scx.stroke();
+    });
+
+    // Sun
+    const sunGrad = scx.createRadialGradient(CX, CY, 0, CX, CY, 22);
+    sunGrad.addColorStop(0, '#fff7aa');
+    sunGrad.addColorStop(0.4, '#fbbf24');
+    sunGrad.addColorStop(1, 'rgba(251,191,36,0)');
+    scx.beginPath();
+    scx.arc(CX, CY, 22, 0, Math.PI * 2);
+    scx.fillStyle = sunGrad;
+    scx.fill();
+
+    // Sun corona glow
+    const coronaGrad = scx.createRadialGradient(CX, CY, 10, CX, CY, 40);
+    coronaGrad.addColorStop(0, 'rgba(251,191,36,0.15)');
+    coronaGrad.addColorStop(1, 'rgba(251,191,36,0)');
+    scx.beginPath();
+    scx.arc(CX, CY, 40, 0, Math.PI * 2);
+    scx.fillStyle = coronaGrad;
+    scx.fill();
+
+    const t = ts * 0.001;
+
+    planets.forEach(p => {
+      p.angle += p.speed * 0.4;
+      const px = CX + Math.cos(p.angle) * p.orbit;
+      const py = CY + Math.sin(p.angle) * p.orbit;
+
+      // Planet glow
+      const glowGrad = scx.createRadialGradient(px, py, 0, px, py, p.radius * 2.5);
+      glowGrad.addColorStop(0, (p.glow || p.color) + 'aa');
+      glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      scx.beginPath();
+      scx.arc(px, py, p.radius * 2.5, 0, Math.PI * 2);
+      scx.fillStyle = glowGrad;
+      scx.fill();
+
+      // Saturn rings
+      if (p.rings) {
+        scx.save();
+        scx.translate(px, py);
+        scx.rotate(0.4);
+        scx.scale(1, 0.35);
+        scx.beginPath();
+        scx.arc(0, 0, p.radius + 9, 0, Math.PI * 2);
+        scx.strokeStyle = 'rgba(217,119,6,0.55)';
+        scx.lineWidth = 4;
+        scx.stroke();
+        scx.beginPath();
+        scx.arc(0, 0, p.radius + 14, 0, Math.PI * 2);
+        scx.strokeStyle = 'rgba(217,119,6,0.25)';
+        scx.lineWidth = 2.5;
+        scx.stroke();
+        scx.restore();
+      }
+
+      // Planet body
+      scx.beginPath();
+      scx.arc(px, py, p.radius, 0, Math.PI * 2);
+      scx.fillStyle = p.color;
+      scx.fill();
+
+      // Earth landmass hint
+      if (p.name === 'Earth') {
+        scx.beginPath();
+        scx.arc(px - 2, py - 2, 4, 0, Math.PI * 2);
+        scx.fillStyle = '#22c55e';
+        scx.fill();
+
+        // Moon
+        if (p.moon) {
+          p.moon.angle += p.moon.speed * 0.4;
+          const mx = px + Math.cos(p.moon.angle) * p.moon.orbit;
+          const my = py + Math.sin(p.moon.angle) * p.moon.orbit;
+          scx.beginPath();
+          scx.arc(mx, my, p.moon.radius, 0, Math.PI * 2);
+          scx.fillStyle = p.moon.color;
+          scx.fill();
+        }
+      }
+
+      // Planet label
+      scx.fillStyle = 'rgba(148,163,184,0.5)';
+      scx.font = '9px JetBrains Mono, monospace';
+      scx.fillText(p.name, px + p.radius + 3, py + 3);
+    });
+
+    requestAnimationFrame(drawSolar);
+  }
+
+  requestAnimationFrame(drawSolar);
 </script>
 
 </body>
