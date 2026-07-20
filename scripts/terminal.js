@@ -123,6 +123,28 @@
     ls: function () {
       return ['experience/  skills/  profiles/  contact/  <span class="hl">secrets.txt</span>'];
     },
+    cat: function (args) {
+      var file = (args[0] || '').toLowerCase().replace(/\/$/, '');
+      if (!file) return ['usage: cat &lt;file&gt; — try <span class="k">cat secrets.txt</span>'];
+      if (file === 'secrets.txt') {
+        return [
+          '<span class="hl">// access granted — you actually opened it. respect. 🕵️</span>',
+          '&nbsp;',
+          '"the best infrastructure is invisible —',
+          '  it just keeps running while everyone sleeps."',
+          '&nbsp;',
+          '<span class="k">secret unlocked:</span> flag{<span class="hl">stay_curious_keep_the_uptime</span>}',
+          'psst… now try <span class="k">matrix</span> 🐇'
+        ];
+      }
+      if (file === 'stack.txt') {
+        return ['Linux · Networking · Python · Cybersecurity · AWS'];
+      }
+      if (['experience', 'skills', 'profiles', 'contact'].indexOf(file) !== -1) {
+        return ['<span class="err">cat: ' + esc(file) + ': Is a directory</span> — try the <span class="k">' + esc(file) + '</span> command'];
+      }
+      return ['<span class="err">cat: ' + esc(args[0]) + ': No such file or directory</span>'];
+    },
     echo: function (args) { return [args.length ? esc(args.join(' ')) : '']; },
     sudo: function () {
       return ['<span class="err">mohammadsajjad is not in the sudoers file. This incident will be reported. 😏</span>'];
